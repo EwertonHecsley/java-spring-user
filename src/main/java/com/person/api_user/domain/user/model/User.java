@@ -1,4 +1,4 @@
-package com.person.api_user.domain.model;
+package com.person.api_user.domain.user.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
