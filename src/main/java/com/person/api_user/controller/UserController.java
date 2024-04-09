@@ -1,5 +1,6 @@
 package com.person.api_user.controller;
 
+import com.person.api_user.domain.user.dto.UserResponseDto;
 import com.person.api_user.domain.user.model.User;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User dataUser){
+    public ResponseEntity<UserResponseDto> create(@RequestBody User dataUser){
         
         Optional<User> existingUser = userRepository.findByEmail(dataUser.getEmail());
 
@@ -46,8 +47,9 @@ public class UserController {
         }
 
         User newUser = userRepository.save(dataUser);
+        UserResponseDto userResponse = new UserResponseDto(newUser.getId(), newUser.getName(), newUser.getEmail());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 }
 
