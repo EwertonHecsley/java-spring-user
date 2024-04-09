@@ -6,6 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 
 @Entity
 @Table(name="users")
@@ -16,12 +20,15 @@ public class User {
     private Integer id;
 
     @Column(nullable = false)
+    @NotBlank(message = "O campo nome não pode ser embranco")
     private String name;
 
     @Column(nullable = false)
+    @Email(message = "Formato de email inválido")
     private String email;
 
     @Column(nullable = false)
+    @Size(min = 4,message = "A senha deve ter o mínimo 4 caracteres")
     private String password;
     
     public User(){}
