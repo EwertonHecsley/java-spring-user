@@ -2,12 +2,14 @@ package com.person.api_user.controller;
 
 import com.person.api_user.domain.user.dto.UserResponseDto;
 import com.person.api_user.domain.user.model.User;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -97,6 +99,19 @@ public class UserController {
         user.setPassword(hashedPassword);
 
         userRepository.save(user);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> destroy(@PathVariable Integer id){
+        Optional<User> existngUser = userRepository.findById(id);
+
+        if(existngUser.isEmpty()){
+            throw new UserNotFoudException();
+        }
+
+        userRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }
