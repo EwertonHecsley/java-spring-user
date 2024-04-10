@@ -4,7 +4,6 @@ import com.person.api_user.domain.user.dto.UserResponseDto;
 import com.person.api_user.domain.user.model.User;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.person.api_user.domain.user.repository.UserRepository;
 import com.person.api_user.httpExceptions.EmailAlreadyExists;
 import com.person.api_user.httpExceptions.UserNotFoudException;
+import com.person.api_user.service.PasswordHashService;
 
 @RestController
 @RequestMapping("/user")
@@ -25,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordHashService passwordHashService;
 
     @GetMapping("/{id}")
     public User detail(@PathVariable Integer id){
@@ -45,6 +47,9 @@ public class UserController {
         if(existingUser.isPresent()){
             throw new EmailAlreadyExists();
         }
+
+        String hashedPassword = passwordHashService.hashPassword(dataUser.getPassword());
+        dataUser.setPassword(hashedPassword);
 
         User newUser = userRepository.save(dataUser);
         UserResponseDto userResponse = new UserResponseDto(newUser.getId(), newUser.getName(), newUser.getEmail());
