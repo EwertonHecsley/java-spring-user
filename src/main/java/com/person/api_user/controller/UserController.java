@@ -32,9 +32,18 @@ public class UserController {
     private PasswordHashService passwordHashService;
 
     @GetMapping("/{id}")
-    public User detail(@PathVariable Integer id){
-        return userRepository.findById(id)
-        .orElseThrow(()-> new UserNotFoudException());
+    public ResponseEntity<UserResponseDto> detail(@PathVariable Integer id){
+        Optional<User> existingUser = userRepository.findById(id);
+
+        if(existingUser.isEmpty()){
+            throw new UserNotFoudException();
+        }
+
+        User user = existingUser.get();
+
+        UserResponseDto userResponse = new UserResponseDto(user.getId(), user.getName(),user.getEmail());
+
+        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
     @GetMapping
