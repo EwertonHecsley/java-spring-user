@@ -3,6 +3,7 @@ package com.person.api_user.controller;
 import com.person.api_user.domain.user.dto.UserResponseDto;
 import com.person.api_user.domain.user.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,8 +54,22 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> listAll(){
-        return userRepository.findAll();
+    public List<UserResponseDto> listAll(){
+        List<User> users = userRepository.findAll();
+       
+        List<UserResponseDto> userDtos = new ArrayList<UserResponseDto>();
+
+        for(User user : users){
+            UserResponseDto userResponse = new UserResponseDto(
+                user.getId(), 
+                user.getName(),
+                user.getEmail()
+                );
+
+            userDtos.add(userResponse);
+        }
+
+        return userDtos;
     }
 
     @PostMapping
