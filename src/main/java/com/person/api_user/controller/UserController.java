@@ -4,6 +4,7 @@ import com.person.api_user.domain.user.dto.UserResponseDto;
 import com.person.api_user.domain.user.model.User;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.PutExchange;
+
 import com.person.api_user.domain.user.repository.UserRepository;
 import com.person.api_user.httpExceptions.EmailAlreadyExists;
 import com.person.api_user.httpExceptions.UserNotFoudException;
@@ -55,6 +58,34 @@ public class UserController {
         UserResponseDto userResponse = new UserResponseDto(newUser.getId(), newUser.getName(), newUser.getEmail());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+    }
+
+    @PutExchange("/{id}")
+    public ResponseEntity<UserResponseDto> update(@RequestBody User dataUser, @PathVariable Integer id){
+
+        Optional<User> existngUser = userRepository.findById(id);
+
+        if(existngUser.isEmpty()){
+            throw new UserNotFoudException();
+        }
+
+        Optional<User> existingEmail = userRepository.findByEmail(dataUser.getEmail());
+
+        if(existingEmail.isPresent()){
+            throw new EmailAlreadyExists();
+        }
+
+        String hashedPassword = passwordHashService.hashPassword(dataUser.getPassword());
+
+        User user = existngUser.get();
+
+        user.setName(dataUser.getName());
+        user.setEmail(dataUser.getEmail());
+        user.setPassword(hashedPassword);
+
+        userRepository.save(user);
+
+        return ResponseEntity.noContent().build();
     }
 }
 
