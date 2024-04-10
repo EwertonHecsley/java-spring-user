@@ -11,10 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.service.annotation.PutExchange;
 
 import com.person.api_user.domain.user.repository.UserRepository;
 import com.person.api_user.httpExceptions.EmailAlreadyExists;
@@ -41,7 +41,11 @@ public class UserController {
 
         User user = existingUser.get();
 
-        UserResponseDto userResponse = new UserResponseDto(user.getId(), user.getName(),user.getEmail());
+        UserResponseDto userResponse = new UserResponseDto(
+            user.getId(), 
+            user.getName(),
+            user.getEmail()
+            );
 
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
@@ -69,7 +73,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 
-    @PutExchange("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserResponseDto> update(@RequestBody User dataUser, @PathVariable Integer id){
 
         Optional<User> existngUser = userRepository.findById(id);
